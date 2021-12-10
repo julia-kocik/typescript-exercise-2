@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import {userObj} from './data/data';
+import {accountsObj} from './data/data';
 
 interface GetUserResponse {
   email: string;
@@ -10,39 +12,48 @@ interface GetBankAccountsResponse {
   }>;
 }
 
-interface UserDetailsViewProps {}
+interface UserDetailsViewProps {
+  pageNo: number;
+}
 
 export const UserDetailsView = (props: UserDetailsViewProps) => {
   // Implementation...
   const [user, setUser] = useState<GetUserResponse | null>(null)
   const [account, setAccount] = useState<GetBankAccountsResponse | null>(null)
-  console.log(user)
+  const [pageNumber, setPageNumber] = useState<number>(props.pageNo);
   useEffect(() => {
     const fetchUser = async () => {
-      const userObj =  {email: 'julia@example.com'}
       await setTimeout(() => {
-          setUser(userObj)
-        }, 3000);
+        setUser(userObj)
+      }, 3000);
     };
     const fetchAccounts = async () => {
-        const accountsObj =  {accounts: [{balance: 12345}, {balance: 54321}, {balance: 13153}, {balance: 12435}]}
-        await setTimeout(() => {
-            setAccount(accountsObj)
-          }, 3000);
-      };
+      await setTimeout(() => {
+        setAccount(accountsObj)
+      }, 3000);
+    };
+
     fetchUser();
     fetchAccounts();
-  }, []);
+  }, [pageNumber]);
 
   return (
     user === null || account === null ?
     <h1>Loading</h1>
     :
     <div>
-        <h1>User is{user?.email}</h1>
+        <h1>User is: {user?.email}</h1>
         {account.accounts.map((item) => (
             <p>{item.balance}</p>
         ))}
+        <input
+        type="number"
+        value={pageNumber}
+        min={0}
+        max={5}
+        onChange={event => setPageNumber(parseInt(event.target.value))}
+      />
+      <h1>Page Number is: {pageNumber}</h1>
     </div>
   )
 };
